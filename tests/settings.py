@@ -1,37 +1,29 @@
-"""
-Minimal Django settings for running the django-strava test suite.
-"""
+"""Test settings: in-memory sqlite, dummy Strava credentials."""
 
-SECRET_KEY = "test-secret-key-not-for-production"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ":memory:",
-    }
-}
+SECRET_KEY = "test-secret-key"  # noqa: S105
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+USE_TZ = True
 
 INSTALLED_APPS = [
-    "django.contrib.contenttypes",
+    "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django_strava",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "healthdatamodel",
+    "strava",
 ]
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-
-# django_strava.apps.StravaConfig declares label = 'strava', so migrations live
-# under that label – point Django at them explicitly.
-MIGRATION_MODULES = {
-    "strava": "django_strava.migrations",
-}
-
-# URL conf required for the test client even if we don't hit all views
 ROOT_URLCONF = "tests.urls"
 
 TEMPLATES = [
@@ -46,13 +38,20 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
         },
-    }
+    },
 ]
 
-# Strava OAuth settings – placeholder values, views are tested with mocks
-STRAVA_CLIENT_ID = "fake-client-id"
-STRAVA_CLIENT_SECRET = "fake-client-secret"  # noqa: S105
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+    }
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-USE_TZ = True
+STRAVA_CLIENT_ID = "12345"
+STRAVA_CLIENT_SECRET = "test-client-secret"  # noqa: S105
+STRAVA_REDIRECT_URI = "http://testserver/strava/callback/"
+STRAVA_WEBHOOK_VERIFY_TOKEN = "test-verify-token"  # noqa: S105
+STRAVA_CONNECT_SUCCESS_URL = "/done/"
