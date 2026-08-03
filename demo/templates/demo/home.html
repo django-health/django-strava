@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>django-strava demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.5; }
+    h1 { font-size: 1.5rem; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 6px; }
+    .row.connected { border-color: #fc4c02; background: #fff7f3; }
+    .row.disconnected { border-color: #c84; background: #fff8f0; }
+    button, a.button { display: inline-block; padding: 0.5rem 1rem; border: 1px solid #fc4c02; background: #fc4c02; color: white; text-decoration: none; border-radius: 4px; cursor: pointer; }
+    .messages { padding: 0; list-style: none; }
+    .messages li { padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 0.5rem; }
+    .messages li.success { background: #e9f7ed; }
+    .messages li.error { background: #fdecea; }
+    nav { font-size: 0.875rem; color: #555; }
+    nav a { color: #555; }
+    code { background: #f3f3f3; padding: 0.1rem 0.3rem; border-radius: 3px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <nav>
+    Signed in as <strong>{{ request.user.username }}</strong> ·
+    <a href="/admin/">admin</a> ·
+    <form action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}<button style="background:none;border:none;color:#555;padding:0;cursor:pointer;text-decoration:underline">sign out</button></form>
+  </nav>
+
+  <h1>django-strava demo</h1>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if connection and connection.status == 'active' %}
+    <div class="row connected">
+      <div>
+        <strong>Strava connected</strong><br />
+        <small>
+          Athlete: <code>{{ connection.athlete_id }}</code>
+          {% if connection.athlete_firstname %}({{ connection.athlete_firstname }} {{ connection.athlete_lastname }}){% endif %}<br />
+          Status: {{ connection.status }} ·
+          Token: {% if connection.is_token_expired %}<strong style="color:#a00">expired</strong>{% else %}valid{% endif %}
+          (expires {{ connection.token_expires_at }}) ·
+          Last sync: {{ connection.last_sync_at|default:"never" }}
+        </small>
+      </div>
+      <form action="{% url 'demo-sync' %}" method="post" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+        {% csrf_token %}
+        <label>
+          days
+          <input type="number" name="days" value="30" min="1" max="365" style="width:4.5rem" />
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:0.25rem" title="fetch HR/cadence/watts streams for the 10 newest activities (1 extra API read each)">
+          <input type="checkbox" name="with_streams" /> streams
+        </label>
+        <button type="submit">Sync now</button>
+      </form>
+    </div>
+    {% if connection.is_token_expired %}
+    <div class="row disconnected">
+      <div>
+        <strong>Access token expired.</strong><br />
+        <small>Strava tokens live 6 hours; a sync refreshes it automatically. If the
+          refresh token was revoked (an <code>invalid_grant</code> on sync), re-authorize.</small>
+      </div>
+      <a class="button" href="{% url 'strava:connect' %}">Re-authorize</a>
+    </div>
+    {% endif %}
+    <div class="row">
+      <div>
+        <strong>{{ workout_count }}</strong> workout(s) ·
+        <strong>{{ record_count }}</strong> record(s) in healthdatamodel
+      </div>
+      <a class="button" href="/admin/healthdatamodel/workout/">Browse workouts</a>
+    </div>
+    {% if recent_workouts %}
+    <table>
+      <thead><tr><th>Start</th><th>Type</th><th>Duration</th><th>Details</th></tr></thead>
+      <tbody>
+        {% for w in recent_workouts %}
+        <tr>
+          <td>{{ w.startDate|date:"Y-m-d H:i" }}</td>
+          <td>{{ w.workoutActivityType }}</td>
+          <td>{{ w.duration }} {{ w.durationUnit }}</td>
+          <td><small>{% for m in w.workoutmetadataentry_set.all %}{% if m.key == 'name' or m.key == 'distance' or m.key == 'average_heartrate' %}{{ m.key }}={{ m.value }} {% endif %}{% endfor %}</small></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-top:1rem">
+      <a class="button" href="{% url 'strava:connect' %}">Re-authorize</a>
+      <form action="{% url 'strava:disconnect' %}" method="post" style="margin:0">
+        {% csrf_token %}
+        <button type="submit" style="background:#fff;color:#a00;border-color:#a00">Disconnect</button>
+      </form>
+    </div>
+  {% else %}
+    <div class="row disconnected">
+      <div>
+        {% if connection %}
+          <strong>Strava {{ connection.status }}.</strong><br />
+          <small>This connection can no longer sync. Re-authorize to resume.</small>
+        {% else %}
+          <strong>Not connected to Strava.</strong><br />
+          <small>You'll be sent to Strava for consent, then back here.</small>
+        {% endif %}
+      </div>
+      <a class="button" href="{% url 'strava:connect' %}">{% if connection %}Re-authorize{% else %}Connect with Strava{% endif %}</a>
+    </div>
+  {% endif %}
+</body>
+</html>

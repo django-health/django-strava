@@ -1,7 +1,7 @@
 [project]
 name = "django-strava"
-version = "0.1.6"
-description = "A Django app to access Strava Web APIs."
+version = "0.2.0"
+description = "A Django app for the Strava V3 API (2026 Developer Program), backed by django-healthdatamodel."
 readme = "README.md"
 license = "BSD-3-Clause"
 requires-python = ">=3.10"
@@ -27,41 +27,43 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 dependencies = [
-    "Django>=4.0",
-    "pytz",
-    "requests",
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-django",
-    "pytz",
+    "django",
+    "django-healthdatamodel>=0.9.0",
+    "httpx",
+    "pydantic>=2",
+    "python-dateutil",
 ]
 
 [dependency-groups]
 dev = [
-    "django>=4.0",
     "pytest",
     "pytest-django",
+    "pytest-freezer",
+    "respx",
 ]
 
 [project.urls]
-Homepage = "https://django-strava.andyreagan.github.io"
-Repository = "https://github.com/andyreagan/django-strava"
-Issues = "https://github.com/andyreagan/django-strava/issues"
+Homepage = "https://github.com/django-health/django-strava"
+Repository = "https://github.com/django-health/django-strava"
+Issues = "https://github.com/django-health/django-strava/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["django_strava"]
+packages = ["strava"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "django_strava/",
+    "strava/",
     "LICENSE",
     "README.md",
     "docs/",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+markers = [
+    "live: requires real Strava OAuth credentials in env (STRAVA_TEST_*)",
 ]
