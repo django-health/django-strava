@@ -24,8 +24,9 @@ replacement host becomes available 2027-01-04 and mandatory 2027-06-01.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator, Mapping
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Iterator, Mapping
+from typing import TYPE_CHECKING, Any
 
 import httpx
 from django.conf import settings

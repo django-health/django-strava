@@ -1,6 +1,6 @@
 [project]
 name = "django-strava"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Django app for the Strava V3 API (2026 Developer Program), backed by django-healthdatamodel."
 readme = "README.md"
 license = "BSD-3-Clause"
