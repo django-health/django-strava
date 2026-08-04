@@ -61,9 +61,11 @@ def test_second_401_raises(connection):
     respx.get(f"{API_BASE_URL}/athlete").mock(
         return_value=Response(401, json={"message": "Unauthorized"})
     )
-    with StravaClient(connection) as client:
-        with pytest.raises(StravaAPIError) as excinfo:
-            client.get_athlete()
+    with (
+        StravaClient(connection) as client,
+        pytest.raises(StravaAPIError) as excinfo,
+    ):
+        client.get_athlete()
     assert excinfo.value.status_code == 401
 
 
@@ -89,9 +91,11 @@ def test_retries_exhausted_raises(connection):
     respx.get(f"{API_BASE_URL}/athlete").mock(
         return_value=Response(503, json={"message": "unavailable"})
     )
-    with StravaClient(connection, max_retries=2, sleep=lambda s: None) as client:
-        with pytest.raises(StravaAPIError) as excinfo:
-            client.get_athlete()
+    with (
+        StravaClient(connection, max_retries=2, sleep=lambda s: None) as client,
+        pytest.raises(StravaAPIError) as excinfo,
+    ):
+        client.get_athlete()
     assert excinfo.value.status_code == 503
 
 

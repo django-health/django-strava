@@ -35,6 +35,8 @@ from . import oauth
 from .constants import API_BASE_URL, DEFAULT_STREAM_KEYS, MAX_PER_PAGE
 
 if TYPE_CHECKING:
+    from typing import Self
+
     from .models import StravaConnection
 
 
@@ -88,7 +90,7 @@ class StravaClient:
 
     # context manager ------------------------------------------------------
 
-    def __enter__(self) -> StravaClient:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *exc: object) -> None:

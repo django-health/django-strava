@@ -125,10 +125,10 @@ class TestSyncUser:
         respx.get(f"{API_BASE_URL}/athlete/activities").mock(
             return_value=Response(200, json=[summary_activity])
         )
-        window = dict(
-            start=datetime(2026, 6, 1, tzinfo=timezone.utc),
-            end=datetime(2026, 7, 1, tzinfo=timezone.utc),
-        )
+        window = {
+            "start": datetime(2026, 6, 1, tzinfo=timezone.utc),
+            "end": datetime(2026, 7, 1, tzinfo=timezone.utc),
+        }
         sync_user(connection, **window)
         sync_user(connection, **window)
         assert Workout.objects.count() == 1
