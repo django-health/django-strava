@@ -115,7 +115,7 @@ class Command(BaseCommand):
                     with_streams=options["with_streams"],
                     stream_activity_limit=options["stream_activity_limit"],
                 )
-            except Exception:  # noqa: BLE001 — log + continue is the contract
+            except Exception:
                 log.exception("sync_user failed for %s", label)
                 failures += 1
                 self.stderr.write(self.style.ERROR(f"  ✗ {label}: failed (see logs)"))

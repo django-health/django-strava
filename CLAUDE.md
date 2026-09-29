@@ -34,9 +34,11 @@ httpx before guessing at code fixes:
 
 ```python
 import os, django, httpx
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "demo.settings")
 django.setup()
 from strava.models import StravaConnection
+
 conn = StravaConnection.objects.first()
 hdr = {"Authorization": f"Bearer {conn.access_token}"}
 # then GET https://www.strava.com/api/v3/athlete/activities etc.

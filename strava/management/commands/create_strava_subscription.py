@@ -22,6 +22,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         try:
             result = create_subscription(callback_url=options["callback_url"])
-        except Exception as exc:  # noqa: BLE001 — surface the API error verbatim
+        except Exception as exc:
             raise CommandError(f"subscription failed: {exc}") from exc
         self.stdout.write(self.style.SUCCESS(f"Subscribed: {result!r}"))
