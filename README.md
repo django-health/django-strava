@@ -47,16 +47,16 @@ except the OAuth connection itself.
    STRAVA_CLIENT_SECRET = "..."
    STRAVA_REDIRECT_URI = "https://example.com/strava/callback/"
    # optional:
-   STRAVA_CONNECT_SUCCESS_URL = "/"          # default: /admin/
+   STRAVA_CONNECT_SUCCESS_URL = "/"  # default: /admin/
    STRAVA_DEFAULT_SCOPES = ["read", "activity:read_all", "profile:read_all"]
-   STRAVA_WEBHOOK_VERIFY_TOKEN = "..."       # only if using webhooks
+   STRAVA_WEBHOOK_VERIFY_TOKEN = "..."  # only if using webhooks
    STRAVA_API_BASE_URL = "https://www.strava.com/api/v3"  # 2027 host cutover knob
    ```
 
 4. Route the app and migrate:
 
    ```python
-   path("strava/", include("strava.urls")),
+   (path("strava/", include("strava.urls")),)
    ```
 
    ```

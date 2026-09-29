@@ -12,6 +12,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         try:
             delete_subscription(options["subscription_id"])
-        except Exception as exc:  # noqa: BLE001 — surface the API error verbatim
+        except Exception as exc:
             raise CommandError(f"delete failed: {exc}") from exc
         self.stdout.write(self.style.SUCCESS("Deleted."))

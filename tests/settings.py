@@ -1,6 +1,6 @@
 """Test settings: in-memory sqlite, dummy Strava credentials."""
 
-SECRET_KEY = "test-secret-key"  # noqa: S105
+SECRET_KEY = "test-secret-key"
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 USE_TZ = True
@@ -51,7 +51,7 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STRAVA_CLIENT_ID = "12345"
-STRAVA_CLIENT_SECRET = "test-client-secret"  # noqa: S105
+STRAVA_CLIENT_SECRET = "test-client-secret"
 STRAVA_REDIRECT_URI = "http://testserver/strava/callback/"
-STRAVA_WEBHOOK_VERIFY_TOKEN = "test-verify-token"  # noqa: S105
+STRAVA_WEBHOOK_VERIFY_TOKEN = "test-verify-token"
 STRAVA_CONNECT_SUCCESS_URL = "/done/"
